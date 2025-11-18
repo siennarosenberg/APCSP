@@ -1,0 +1,271 @@
+// variables
+// var shirtColor = "";
+// var shirtStyle = "";
+// var bottomsColor = "";
+// var bottomsStyle = "";
+// var paperSupply = "";
+var paperSupplyColor = "";
+var price = 0;
+//lists for the bag of stuff, the prices of everything
+var bagList = [];
+var priceList = [];
+//in general buttons
+onEvent("startShoppingButton", "click", function( ) {
+  setScreen("screen2-Search");
+  setText("clothingColors", "color");
+  setText("shirtStyles", "style");
+  setText("bottomsColors", "color");
+  setText("bottomStyles", "style");
+  setText("paperSuppliesDropdown", "");
+  setText("paperColors", "");
+  //set dropdowns to ""
+});
+onEvent("clothesButton", "click", function( ) {
+  setScreen("screen3-Clothing");
+});
+onEvent("shoesButton", "click", function( ) {
+  setScreen("screen4-Shoes");
+});
+onEvent("writingUtensilsButton", "click", function( ) {
+  setScreen("screen5-WritingUtensils");
+});
+onEvent("paperSuppliesButton", "click", function( ) {
+  setScreen("screen6-PaperSupplies");
+});
+function removeBagItem(item) {
+  for (var i = 0; i < bagList.length; i++) {
+    if (bagList[i] == item) {
+      removeItem(bagList, i);
+      price = price - priceList[i];
+      removeItem(priceList, i);
+      i = i + bagList.length;
+    }
+    if (item == "all") {
+      removeItem(bagList, i);
+      price = 0;
+      i = i - 1;
+    }
+    setText("shoppingBagTextArea", bagList.join("\n"));
+    setText("removeItemInput", "");
+  }
+}
+onEvent("removeItemButton", "click", function( ) {
+  removeBagItem("- " + getText("removeItemInput"));
+});
+onEvent("shopAgainButton", "click", function( ) {
+  setScreen("screen1-Welcome");
+  // shirtColor = "";
+  // shirtStyle = "";
+  // bottomsColor = "";
+  // bottomsStyle = "";
+  // paperSupply = "";
+  paperSupplyColor = "";
+  price = 0;
+  bagList = [];
+  priceList = [];
+  setText("totalPriceArea", "");
+  setText("shoppingBagTextArea", "");
+});
+onEvent("checkoutButton", "click", function( ) {
+  setScreen("screen8-TotalPrice");
+  setText("totalPriceArea", "$" + price);
+});
+//clothing
+function pickShirt(shirtColor, shirtStyle) {
+  if (shirtColor == "White" && shirtStyle == "short-sleeve") {
+    showElement("whiteShirtShort");
+    hideElement("whiteShirtLong");
+    hideElement("blackShirtShort");
+    hideElement("blackShirtLong");
+  } else if (shirtColor == "White" && shirtStyle == "long-sleeve") {
+    hideElement("whiteShirtShort");
+    showElement("whiteShirtLong");
+    hideElement("blackShirtShort");
+    hideElement("blackShirtLong");
+  } else if (shirtColor == "Black" && shirtStyle == "short-sleeve") {
+    hideElement("whiteShirtShort");
+    hideElement("whiteShirtLong");
+    showElement("blackShirtShort");
+    hideElement("blackShirtLong");
+  } else if (shirtColor == "Black" && shirtStyle == "long-sleeve") {
+    hideElement("whiteShirtShort");
+    hideElement("whiteShirtLong");
+    hideElement("blackShirtShort");
+    showElement("blackShirtLong");
+  } else {
+    hideElement("whiteShirtShort");
+    hideElement("whiteShirtLong");
+    hideElement("blackShirtShort");
+    hideElement("blackShirtLong");
+  }
+}
+function pickBottoms(bottomsColor, bottomsStyle) {
+  if (bottomsColor == "White" && bottomsStyle == "skirt") {
+    showElement("whiteSkirt");
+    hideElement("whitePants");
+    hideElement("blackSkirt");
+    hideElement("blackPants");
+  } else if (bottomsColor == "Black" && bottomsStyle == "skirt") {
+    hideElement("whiteSkirt");
+    hideElement("whitePants");
+    showElement("blackSkirt");
+    hideElement("blackPants");
+  } else if (bottomsColor == "White" && bottomsStyle == "pants") {
+    hideElement("whiteSkirt");
+    showElement("whitePants");
+    hideElement("blackSkirt");
+    hideElement("blackPants");
+  } else if (bottomsColor == "Black" && bottomsStyle == "pants") {
+    hideElement("whiteSkirt");
+    hideElement("whitePants");
+    hideElement("blackSkirt");
+    showElement("blackPants");
+  } else {
+    hideElement("whiteSkirt");
+    hideElement("whitePants");
+    hideElement("blackSkirt");
+    hideElement("blackPants");
+  }
+}
+onEvent("showOutfitButton", "click", function( ) {
+  pickShirt(getText("clothingColors"), getText("shirtStyles"));
+  // shirtColor = getText("clothingColors");
+  // shirtStyle = getText("shirtStyles");
+  pickBottoms(getText("bottomsColors"), getText("bottomStyles"));
+  // bottomsColor = getText("bottomsColors");
+  // bottomsStyle = getText("bottomStyles");
+});
+onEvent("addOutfitToBag", "click", function( ) {
+  var shirtColor = getText("clothingColors");
+  var shirtStyle = getText("shirtStyles");
+  var bottomsColor = getText("bottomsColors");
+  var bottomsStyle = getText("bottomStyles");
+  if (getProperty("shirtStyles", "text")) {
+    appendItem(bagList, ("- " + shirtColor) + " " + shirtStyle + " collared shirt");
+    price = price + 18;
+    appendItem(priceList, 18);
+  }
+  if (getProperty("bottomStyles", "text")) {
+    appendItem(bagList, "- " + ((bottomsColor + " ") + bottomsStyle));
+    price = price + 24;
+    appendItem(priceList, 24);
+  }
+  setText("clothingColors", "");
+  setText("shirtStyles", "");
+  setText("bottomsColors", "");
+  setText("bottomStyles", "");
+  hideElement("whiteShirtShort");
+  hideElement("whiteShirtLong");
+  hideElement("blackShirtShort");
+  hideElement("blackShirtLong");
+  hideElement("whiteSkirt");
+  hideElement("whitePants");
+  hideElement("blackSkirt");
+  hideElement("blackPants");
+});
+//shoes
+onEvent("brownShoesButton", "click", function( ) {
+  appendItem(bagList, "- Brown dress shoes");
+  price = price + 112;
+  appendItem(priceList, 112);
+});
+onEvent("blackShoesButton", "click", function( ) {
+  appendItem(bagList, "- Black dress shoes");
+  price = price + 112;
+  appendItem(priceList, 112);
+});
+onEvent("converseButton", "click", function( ) {
+  appendItem(bagList, "- White Converse");
+  price = price + 78;
+  appendItem(priceList, 78);
+});
+onEvent("nikeButton", "click", function( ) {
+  appendItem(bagList, "- White Nikes");
+  price = price + 78;
+  appendItem(priceList, 78);
+});
+//writing utensils
+onEvent("addPencils", "click", function( ) {
+  appendItem(bagList, "- Pencils");
+  price = price + 4;
+  appendItem(priceList, 4);
+});
+onEvent("addPen", "click", function( ) {
+  appendItem(bagList, "- Pen");
+  price = price + 2;
+  appendItem(priceList, 2);
+});
+onEvent("addSharpies", "click", function( ) {
+  appendItem(bagList, "- Sharpies");
+  price = price + 9;
+  appendItem(priceList, 9);
+});
+onEvent("addExpoPack", "click", function( ) {
+  appendItem(bagList, "- Expo marker pack");
+  price = price + 10;
+  appendItem(priceList, 10);
+});
+//paper supplies
+function priceForPaper(paperSupply) {
+  if (paperSupply == "Spiral Notebook") {
+    price = price + 4;
+    appendItem(priceList, 4);
+    paperSupplyColor = getText("paperColors");
+  } else if ((paperSupply == "Composition Notebook")) {
+    price = price + 4;
+    appendItem(priceList, 4);
+    paperSupplyColor = getText("paperColors");
+  } else if ((paperSupply == "Binder")) {
+    price = price + 7;
+    appendItem(priceList, 7);
+    paperSupplyColor = getText("paperColors");
+  } else if ((paperSupply == "Sketchbook")) {
+    price = price + 6;
+    appendItem(priceList, 6);
+    paperSupplyColor = getText("paperColors");
+  } else {
+    price = price + 2;
+    appendItem(priceList, 2);
+    paperSupplyColor = getText("paperColors");
+  }
+}
+onEvent("addPaperItemToBag", "click", function( ) {
+  var paperSupply = getText("paperSuppliesDropdown");
+  priceForPaper(getText("paperSuppliesDropdown"));
+  appendItem(bagList, "- " + paperSupplyColor + " " + paperSupply);
+  setText("paperSuppliesDropdown", "");
+  setText("paperColors", "");
+});
+//back to search buttons
+onEvent("backToSearchButton1", "click", function( ) {
+  setScreen("screen2-Search");
+});
+onEvent("backToSearchButton2", "click", function( ) {
+  setScreen("screen2-Search");
+});
+onEvent("backToSearchButton3", "click", function( ) {
+  setScreen("screen2-Search");
+});
+onEvent("backToSearchButton4", "click", function( ) {
+  setScreen("screen2-Search");
+});
+onEvent("backtoSearchButton5", "click", function( ) {
+  setScreen("screen2-Search");
+});
+//view bag buttons
+onEvent("viewBagButton1", "click", function( ) {
+  setScreen("screen7-Bag");
+  setText("shoppingBagTextArea", bagList.join("\n"));
+});
+onEvent("viewBagButton2", "click", function( ) {
+  setScreen("screen7-Bag");
+  setText("shoppingBagTextArea", bagList.join("\n"));
+});
+onEvent("viewBagButton3", "click", function( ) {
+  setScreen("screen7-Bag");
+  setText("shoppingBagTextArea", bagList.join("\n"));
+});
+onEvent("viewBagButton4", "click", function( ) {
+  setScreen("screen7-Bag");
+  setText("shoppingBagTextArea", bagList.join("\n"));
+});
